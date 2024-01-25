@@ -108,7 +108,7 @@ class IPCNetlist(CamFile):
     def nets(self):
         nets = []
         for net in list(set([rec.net_name for rec in self.test_records
-                             if rec.net_name is not None])):
+                             if rec.net_name != None])):
             adjacent_nets = set()
             for record in self.adjacency_records:
                 if record.net == net:
@@ -121,7 +121,7 @@ class IPCNetlist(CamFile):
     @property
     def components(self):
         return list(set([rec.id for rec in self.test_records
-                         if rec.id is not None and rec.id != 'VIA']))
+                         if rec.id != None and rec.id != 'VIA']))
 
     @property
     def vias(self):
@@ -145,7 +145,7 @@ class IPCNetlist(CamFile):
                 ctx.render(p)
             elif layer == 'bottom' and p.layer in ('bottom', 'both'):
                 ctx.render(p)
-        if filename is not None:
+        if filename != None:
             ctx.dump(filename)
 
 
@@ -382,8 +382,8 @@ class IPC356_Outline(object):
         coord_strings = line.strip().split()[1:]
         for coord in coord_strings:
             coord_dict = _COORD.match(coord).groupdict()
-            x = int(coord_dict['x']) if coord_dict['x'] is not '' else x
-            y = int(coord_dict['y']) if coord_dict['y'] is not '' else y
+            x = int(coord_dict['x']) if coord_dict['x'] != '' else x
+            y = int(coord_dict['y']) if coord_dict['y'] != '' else y
             points.append((x * scale, y * scale))
         return cls(type, points)
 
@@ -412,9 +412,9 @@ class IPC356_Conductor(object):
         x = 0
         y = 0
         x = int(aperture_dict['x']) * \
-            scale if aperture_dict['x'] is not '' else None
+            scale if aperture_dict['x'] != '' else None
         y = int(aperture_dict['y']) * \
-            scale if aperture_dict['y'] is not '' else None
+            scale if aperture_dict['y'] != '' else None
         aperture = (x, y)
 
         # Parse out conductor shapes
@@ -428,8 +428,8 @@ class IPC356_Conductor(object):
             coords = rshape.split()
             for coord in coords:
                 coord_dict = _COORD.match(coord).groupdict()
-                x = int(coord_dict['x']) if coord_dict['x'] is not '' else x
-                y = int(coord_dict['y']) if coord_dict['y'] is not '' else y
+                x = int(coord_dict['x']) if coord_dict['x'] != '' else x
+                y = int(coord_dict['y']) if coord_dict['y'] != '' else y
                 shape.append((x * scale, y * scale))
             shapes.append(tuple(shape))
         return cls(net_name, layer, aperture, tuple(shapes))
@@ -479,7 +479,7 @@ class IPC356_Net(object):
     def __init__(self, name, adjacent_nets):
         self.name = name
         self.adjacent_nets = set(
-            adjacent_nets) if adjacent_nets is not None else set()
+            adjacent_nets) if adjacent_nets != None else set()
 
     def __repr__(self):
         return '<IPC-D-356 Net %s>' % self.name
