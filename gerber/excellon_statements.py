@@ -198,7 +198,7 @@ class ExcellonTool(ExcellonStatement):
         return cls(settings, **tool_dict)
 
     def __init__(self, settings, **kwargs):
-        if kwargs.get('id') is not None:
+        if kwargs.get('id') != None:
             super(ExcellonTool, self).__init__(id=kwargs.get('id'))
         self.settings = settings
         self.number = kwargs.get('number')
@@ -218,33 +218,33 @@ class ExcellonTool(ExcellonStatement):
         fmt = settings.format
         zs = settings.zero_suppression
         stmt = 'T%02d' % self.number
-        if self.retract_rate is not None:
+        if self.retract_rate != None:
             stmt += 'B%s' % write_gerber_value(self.retract_rate, fmt, zs)
-        if self.feed_rate is not None:
+        if self.feed_rate != None:
             stmt += 'F%s' % write_gerber_value(self.feed_rate, fmt, zs)
-        if self.max_hit_count is not None:
+        if self.max_hit_count != None:
             stmt += 'H%s' % write_gerber_value(self.max_hit_count, fmt, zs)
-        if self.rpm is not None:
+        if self.rpm != None:
             if self.rpm < 100000.:
                 stmt += 'S%s' % write_gerber_value(self.rpm / 1000., fmt, zs)
             else:
                 stmt += 'S%g' % (self.rpm / 1000.)
-        if self.diameter is not None:
+        if self.diameter != None:
             stmt += 'C%s' % decimal_string(self.diameter, fmt[1], True)
-        if self.depth_offset is not None:
+        if self.depth_offset != None:
             stmt += 'Z%s' % write_gerber_value(self.depth_offset, fmt, zs)
         return stmt
 
     def to_inch(self):
         if self.settings.units != 'inch':
             self.settings.units = 'inch'
-            if self.diameter is not None:
+            if self.diameter != None:
                 self.diameter = inch(self.diameter)
 
     def to_metric(self):
         if self.settings.units != 'metric':
             self.settings.units = 'metric'
-            if self.diameter is not None:
+            if self.diameter != None:
                 self.diameter = metric(self.diameter)
 
     def _hit(self):
@@ -305,13 +305,13 @@ class ToolSelectionStmt(ExcellonStatement):
         super(ToolSelectionStmt, self).__init__(**kwargs)
         tool = int(tool)
         compensation_index = (int(compensation_index) if compensation_index
-                              is not None else None)
+                              != None else None)
         self.tool = tool
         self.compensation_index = compensation_index
 
     def to_excellon(self, settings=None):
         stmt = 'T%02d' % self.tool
-        if self.compensation_index is not None:
+        if self.compensation_index != None:
             stmt += '%02d' % self.compensation_index
         return stmt
 
@@ -405,10 +405,10 @@ class CoordinateStmt(ExcellonStatement):
             stmt += "G00"
         if self.mode == "LINEAR":
             stmt += "G01"
-        if self.x is not None:
+        if self.x != None:
             stmt += 'X%s' % write_gerber_value(self.x, settings.format,
                                                settings.zero_suppression)
-        if self.y is not None:
+        if self.y != None:
             stmt += 'Y%s' % write_gerber_value(self.y, settings.format,
                                                settings.zero_suppression)
         return stmt
@@ -416,30 +416,30 @@ class CoordinateStmt(ExcellonStatement):
     def to_inch(self):
         if self.units == 'metric':
             self.units = 'inch'
-            if self.x is not None:
+            if self.x != None:
                 self.x = inch(self.x)
-            if self.y is not None:
+            if self.y != None:
                 self.y = inch(self.y)
 
     def to_metric(self):
         if self.units == 'inch':
             self.units = 'metric'
-            if self.x is not None:
+            if self.x != None:
                 self.x = metric(self.x)
-            if self.y is not None:
+            if self.y != None:
                 self.y = metric(self.y)
 
     def offset(self, x_offset=0, y_offset=0):
-        if self.x is not None:
+        if self.x != None:
             self.x += x_offset
-        if self.y is not None:
+        if self.y != None:
             self.y += y_offset
 
     def __str__(self):
         coord_str = ''
-        if self.x is not None:
+        if self.x != None:
             coord_str += 'X: %g ' % self.x
-        if self.y is not None:
+        if self.y != None:
             coord_str += 'Y: %g ' % self.y
 
         return '<Coordinate Statement: %s>' % coord_str
@@ -455,10 +455,10 @@ class RepeatHoleStmt(ExcellonStatement):
         count = int(stmt['rcount'])
         xdelta = (parse_gerber_value(stmt['xdelta'], settings.format,
                                      settings.zero_suppression)
-                  if stmt['xdelta'] is not '' else None)
+                  if stmt['xdelta'] != '' else None)
         ydelta = (parse_gerber_value(stmt['ydelta'], settings.format,
                                      settings.zero_suppression)
-                  if stmt['ydelta'] is not '' else None)
+                  if stmt['ydelta'] != '' else None)
         c = cls(count, xdelta, ydelta, **kwargs)
         c.units = settings.units
         return c
@@ -471,10 +471,10 @@ class RepeatHoleStmt(ExcellonStatement):
 
     def to_excellon(self, settings):
         stmt = 'R%d' % self.count
-        if self.xdelta is not None and self.xdelta != 0.0:
+        if self.xdelta != None and self.xdelta != 0.0:
             stmt += 'X%s' % write_gerber_value(self.xdelta, settings.format,
                                                settings.zero_suppression)
-        if self.ydelta is not None and self.ydelta != 0.0:
+        if self.ydelta != None and self.ydelta != 0.0:
             stmt += 'Y%s' % write_gerber_value(self.ydelta, settings.format,
                                                settings.zero_suppression)
         return stmt
@@ -482,24 +482,24 @@ class RepeatHoleStmt(ExcellonStatement):
     def to_inch(self):
         if self.units == 'metric':
             self.units = 'inch'
-            if self.xdelta is not None:
+            if self.xdelta != None:
                 self.xdelta = inch(self.xdelta)
-            if self.ydelta is not None:
+            if self.ydelta != None:
                 self.ydelta = inch(self.ydelta)
 
     def to_metric(self):
         if self.units == 'inch':
             self.units = 'metric'
-            if self.xdelta is not None:
+            if self.xdelta != None:
                 self.xdelta = metric(self.xdelta)
-            if self.ydelta is not None:
+            if self.ydelta != None:
                 self.ydelta = metric(self.ydelta)
 
     def __str__(self):
         return '<Repeat Hole: %d times, offset X: %g Y: %g>' % (
             self.count,
-            self.xdelta if self.xdelta is not None else 0,
-            self.ydelta if self.ydelta is not None else 0)
+            self.xdelta if self.xdelta != None else 0,
+            self.ydelta if self.ydelta != None else 0)
 
 
 class CommentStmt(ExcellonStatement):
@@ -606,10 +606,10 @@ class EndOfProgramStmt(ExcellonStatement):
         stmt = match.groupdict()
         x = (parse_gerber_value(stmt['x'], settings.format,
                                 settings.zero_suppression)
-             if stmt['x'] is not '' else None)
+             if stmt['x'] != '' else None)
         y = (parse_gerber_value(stmt['y'], settings.format,
                                 settings.zero_suppression)
-             if stmt['y'] is not '' else None)
+             if stmt['y'] != '' else None)
         c = cls(x, y, **kwargs)
         c.units = settings.units
         return c
@@ -621,32 +621,32 @@ class EndOfProgramStmt(ExcellonStatement):
 
     def to_excellon(self, settings=None):
         stmt = 'M30'
-        if self.x is not None:
+        if self.x != None:
             stmt += 'X%s' % write_gerber_value(self.x)
-        if self.y is not None:
+        if self.y != None:
             stmt += 'Y%s' % write_gerber_value(self.y)
         return stmt
 
     def to_inch(self):
         if self.units == 'metric':
             self.units = 'inch'
-            if self.x is not None:
+            if self.x != None:
                 self.x = inch(self.x)
-            if self.y is not None:
+            if self.y != None:
                 self.y = inch(self.y)
 
     def to_metric(self):
         if self.units == 'inch':
             self.units = 'metric'
-            if self.x is not None:
+            if self.x != None:
                 self.x = metric(self.x)
-            if self.y is not None:
+            if self.y != None:
                 self.y = metric(self.y)
 
     def offset(self, x_offset=0, y_offset=0):
-        if self.x is not None:
+        if self.x != None:
             self.x += x_offset
-        if self.y is not None:
+        if self.y != None:
             self.y += y_offset
 
 
@@ -901,19 +901,19 @@ class SlotStmt(ExcellonStatement):
     def to_excellon(self, settings):
         stmt = ''
 
-        if self.x_start is not None:
+        if self.x_start != None:
             stmt += 'X%s' % write_gerber_value(self.x_start, settings.format,
                                                settings.zero_suppression)
-        if self.y_start is not None:
+        if self.y_start != None:
             stmt += 'Y%s' % write_gerber_value(self.y_start, settings.format,
                                                settings.zero_suppression)
 
         stmt += 'G85'
 
-        if self.x_end is not None:
+        if self.x_end != None:
             stmt += 'X%s' % write_gerber_value(self.x_end, settings.format,
                                                settings.zero_suppression)
-        if self.y_end is not None:
+        if self.y_end != None:
             stmt += 'Y%s' % write_gerber_value(self.y_end, settings.format,
                                                settings.zero_suppression)
 
@@ -922,48 +922,48 @@ class SlotStmt(ExcellonStatement):
     def to_inch(self):
         if self.units == 'metric':
             self.units = 'inch'
-            if self.x_start is not None:
+            if self.x_start != None:
                 self.x_start = inch(self.x_start)
-            if self.y_start is not None:
+            if self.y_start != None:
                 self.y_start = inch(self.y_start)
-            if self.x_end is not None:
+            if self.x_end != None:
                 self.x_end = inch(self.x_end)
-            if self.y_end is not None:
+            if self.y_end != None:
                 self.y_end = inch(self.y_end)
 
     def to_metric(self):
         if self.units == 'inch':
             self.units = 'metric'
-            if self.x_start is not None:
+            if self.x_start != None:
                 self.x_start = metric(self.x_start)
-            if self.y_start is not None:
+            if self.y_start != None:
                 self.y_start = metric(self.y_start)
-            if self.x_end is not None:
+            if self.x_end != None:
                 self.x_end = metric(self.x_end)
-            if self.y_end is not None:
+            if self.y_end != None:
                 self.y_end = metric(self.y_end)
 
     def offset(self, x_offset=0, y_offset=0):
-        if self.x_start is not None:
+        if self.x_start != None:
             self.x_start += x_offset
-        if self.y_start is not None:
+        if self.y_start != None:
             self.y_start += y_offset
-        if self.x_end is not None:
+        if self.x_end != None:
             self.x_end += x_offset
-        if self.y_end is not None:
+        if self.y_end != None:
             self.y_end += y_offset
 
     def __str__(self):
         start_str = ''
-        if self.x_start is not None:
+        if self.x_start != None:
             start_str += 'X: %g ' % self.x_start
-        if self.y_start is not None:
+        if self.y_start != None:
             start_str += 'Y: %g ' % self.y_start
 
         end_str = ''
-        if self.x_end is not None:
+        if self.x_end != None:
             end_str += 'X: %g ' % self.x_end
-        if self.y_end is not None:
+        if self.y_end != None:
             end_str += 'Y: %g ' % self.y_end
 
         return '<Slot Statement: %s to %s>' % (start_str, end_str)

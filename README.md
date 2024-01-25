@@ -60,3 +60,12 @@ Dependencies for developing and testing pcb-tools are listed in requirements-dev
 We use [pytest](https://docs.pytest.org/en/latest/) to run pcb-tools's suite of unittests and doctests.
 
     (venv)$ pytest
+
+
+## MacOS install - Tested on M2
+```
+python3 -m venv venv
+source venv/bin/activate
+brew install cairo pkg-config
+python3 setup.py install
+```
